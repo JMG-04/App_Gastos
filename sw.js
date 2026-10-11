@@ -1,6 +1,6 @@
 'use strict';
-const V = 'gastos-v6'; // súbelo (v2, v3...) cuando cambies archivos de la app
-const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'theme.js', 'manifest.json', 'icons/icon-192.png', 'icons/icon-512.png'];
+const V = 'gastos-v7'; // súbelo (v2, v3...) cuando cambies archivos de la app
+const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'theme.js', 'manifest.json', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(V).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
