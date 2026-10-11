@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://accounts.google.com/gsi/client; style-src 'self' https://accounts.google.com/gsi/style; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://accounts.google.com/gsi/; frame-src https://accounts.google.com/gsi/; img-src 'self' data: https:; base-uri 'none'; form-action 'self'">
+<meta name="theme-color" content="#185FA5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Gastos">
+<title>Gastos</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="app">
+  <header class="status">
+    <span id="dot" class="dot offline" aria-hidden="true"></span>
+    <span id="stext" role="status">Cargando…</span>
+    <button id="refresh" class="icon-btn" type="button" aria-label="Sincronizar ahora">↻</button>
+  </header>
+  <div id="gbtn" hidden></div>
+
+  <nav class="month" aria-label="Mes">
+    <button id="prev" class="icon-btn" type="button" aria-label="Mes anterior">‹</button>
+    <h1 id="mlabel"></h1>
+    <button id="next" class="icon-btn" type="button" aria-label="Mes siguiente">›</button>
+  </nav>
+
+  <section class="card total">
+    <div class="muted small">Gastado este mes</div>
+    <div id="total" class="big"></div>
+    <div id="count" class="muted small"></div>
+  </section>
+
+  <section>
+    <h2>Por categoría</h2>
+    <div class="chart">
+      <svg id="donut" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Gráfico de gastos por categoría"></svg>
+      <div id="legend"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Historial</h2>
+    <div id="list"></div>
+  </section>
+
+  <button id="fab" class="fab" type="button" aria-label="Agregar gasto">+</button>
+</main>
+
+<dialog id="dlg">
+  <form id="form" autocomplete="off">
+    <h2>Nuevo gasto</h2>
+    <label for="amt">Monto</label>
+    <input id="amt" type="number" inputmode="decimal" min="0" step="any" placeholder="Monto en colones">
+    <label for="cat">Categoría</label>
+    <select id="cat"></select>
+    <label for="desc">Descripción</label>
+    <input id="desc" type="text" maxlength="100" placeholder="Almuerzo con compañeros">
+    <label for="date">Fecha</label>
+    <input id="date" type="date">
+    <div id="err" class="error" role="alert"></div>
+    <div class="row">
+      <button id="cancel" type="button">Cancelar</button>
+      <button id="save" type="submit" class="primary">Guardar</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="app.js" defer></script>
+</body>
+</html>
