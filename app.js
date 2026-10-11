@@ -47,7 +47,8 @@ async function delItem(id) { return req((await store('readwrite')).delete(id)); 
 let items = [];
 let month = todayStr().slice(0, 7);
 let st = 'ok', syncing = false, pulled = false, lastErr = '';
-const auth = { token: null, exp: 0 };
+const auth = { session: null };
+try { auth.session = localStorage.getItem('gastos-session'); } catch (e) { }
 
 // ===== Interfaz =====
 function render() {
@@ -138,11 +139,21 @@ let gReady = false, gLoading = false;
 function parseJwt(t) {
   try { return JSON.parse(atob(t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))); } catch (e) { return null; }
 }
-function getToken() { return auth.token && auth.exp * 1000 - 60000 > Date.now() ? auth.token : null; }
-function onCred(r) {
-  const p = parseJwt(r.credential);
-  if (!p) return;
-  auth.token = r.credential; auth.exp = p.exp;
+function getToken() { return auth.session; }
+function setSession(v) {
+  auth.session = v;
+  try { if (v) localStorage.setItem('gastos-session', v); else localStorage.removeItem('gastos-session'); } catch (e) { }
+}
+async function onCred(r) {
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'login', token: r.credential })
+    });
+    const j = await res.json();
+    if (!j.ok) throw new Error(j.error || 'No se pudo iniciar sesión');
+    setSession(j.data.session);
+  } catch (e) { st = 'error'; lastErr = e.message; updateStatus(); return; }
   sync();
 }
 function loadGsi() {
@@ -176,11 +187,11 @@ async function api(action, extra) {
   const r = await fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // evita preflight CORS
-    body: JSON.stringify(Object.assign({ action: action, token: auth.token }, extra))
+    body: JSON.stringify(Object.assign({ action: action, session: auth.session }, extra))
   });
   const j = await r.json();
   if (!j.ok) {
-    if (/token|autorizado/i.test(j.error || '')) { auth.token = null; throw new Error('auth'); }
+    if (/token|autorizado|sesi/i.test(j.error || '')) { setSession(null); throw new Error('auth'); }
     throw new Error(j.error || 'Error desconocido');
   }
   return j.data;
@@ -189,7 +200,7 @@ async function api(action, extra) {
 async function sync() {
   if (syncing) return;
   if (!navigator.onLine) { updateStatus(); return; }
-  loadGsi();
+  if (!auth.session) loadGsi();
   const pend = items.some(i => i.pending || i.deleted);
   if (!getToken()) { promptLogin(); st = (pend || !pulled) ? 'login' : 'ok'; updateStatus(); return; }
   syncing = true; st = 'syncing'; updateStatus();
@@ -213,7 +224,7 @@ async function sync() {
     }
     pulled = true; st = 'ok';
   } catch (e) {
-    if (e.message === 'auth') st = 'login';
+    if (e.message === 'auth') { st = 'login'; loadGsi(); }
     else { st = 'error'; lastErr = e.message; console.error(e); }
   } finally {
     syncing = false;

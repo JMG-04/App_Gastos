@@ -1,5 +1,5 @@
 'use strict';
-const V = 'gastos-v5'; // súbelo (v2, v3...) cuando cambies archivos de la app
+const V = 'gastos-v6'; // súbelo (v2, v3...) cuando cambies archivos de la app
 const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'theme.js', 'manifest.json', 'icons/icon-192.png', 'icons/icon-512.png'];
 
 self.addEventListener('install', e => {
