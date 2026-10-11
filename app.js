@@ -6,6 +6,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbwO2TlH5g4ahp1msgcz_-AX
 
 const CATS = {
   Vivienda: ['#7F77DD', '🏠'], Comida: ['#D85A30', '🍽️'], Transporte: ['#1D9E75', '🚗'],
+  Gasolina: ['#E0A800', '⛽'],
   Servicios: ['#378ADD', '⚡'], Ocio: ['#D4537E', '🎬'], Salud: ['#BA7517', '❤️'], Otros: ['#888780', '🧾']
 };
 const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
